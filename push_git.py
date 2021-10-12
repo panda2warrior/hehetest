@@ -15,29 +15,13 @@
 # limitations under the License.
 # ==============================================================================
 import os
-from preprocessing.general_tools import multiprocessing_execute_func
-
-
-def filter_positive_samples():
-    '''
-    basic strategy: 1. filter 5m data, by percent of last 5 days.
-    '''
-    file_dir = '../data/data_by_code/'
-    m5_filenames = [x if '5m' in x for x in os.listdir(file_dir)]
-    m5_filepaths = [file_dir + x for x in m5_filenames]
-
-
-def statistic_analysis():
-    '''
-    Some statistic experiments.
-    '''
-    datadir = '../data/data_by_code/'
-    filepaths = [datadir + x if '_1d' in x for x in os.listdir(datadir)]
-
-    def analysis_func(filename):
-
-
 
 if __name__ == '__main__':
-    statistic_analysis()
+    filedir = '../hehetest2/data/data_by_code/'
+    filenames = [filedir + x for x in os.listdir(filedir)]
 
+    for single_file in filenames:
+        os.system('mv {} ./data/data_by_code/'.format(single_file))
+        os.system('git add .')
+        os.system('git commit -m {}'.format(single_file.split('/')[-1]))
+        os.system('git push origin')

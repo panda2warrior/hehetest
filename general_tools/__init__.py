@@ -14,7 +14,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-# @Time    : 12/10/21 19:21
-# @Author  : Leiming Du
-# @Email   : duleimingdo@gmail.com
-# @FileName: __init__.py.py
