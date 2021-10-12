@@ -15,6 +15,7 @@
 # limitations under the License.
 # ==============================================================================
 import os
+import pandas as pd
 from preprocessing.general_tools import multiprocessing_execute_func
 
 
@@ -32,9 +33,17 @@ def statistic_analysis():
     Some statistic experiments.
     '''
     datadir = '../data/data_by_code/'
-    filepaths = [datadir + x if '_1d' in x for x in os.listdir(datadir)]
+    filepaths = [datadir + x for x in os.listdir(datadir) if '_1d' in x]
 
     def analysis_func(filename):
+        '''returned from dict {name: output}'''
+        from ..preprocessing.normalize_module import normalize_daily_price_dataframe
+        from ..preprocessing.normalize_module import adding_pct_change_columns
+        original_df = normalize_daily_price_dataframe(filename, if_write=False)
+        adding_pct_df = adding_pct_change_columns(original_df, interval_lists=[1])
+        adding_pct_df.fillna(1e-10)
+        #todo
+
 
 
 

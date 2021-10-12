@@ -17,15 +17,13 @@
 import time
 import os
 os.environ["MODIN_ENGINE"] = "ray"
-# import modin.pandas as pd
-# import dask.dataframe as pd
 import pandas as pd
 import numpy as np
 import pickle
 import logging
 
 
-def normalize_daily_price_dataframe(raw_df_filepath):
+def normalize_daily_price_dataframe(raw_df_filepath, if_write=False):
     '''
     read file from mysql, drop repeated and nas, preprocess and output normalized dataframe.
     '''
@@ -43,10 +41,11 @@ def normalize_daily_price_dataframe(raw_df_filepath):
     drop_list = ['index']
     df = df.drop(labels=drop_list, axis=1)  # drop unrelated columns
 
-    df = df.drop_duplicates().compute()  # drop repeated rows
+    df = df.drop_duplicates() # drop repeated rows
 
-    df.to_csv(raw_df_filepath+'.normalized.csv.gzip', index=False, header=True)
-    logging.info('successfully normalized file {}...'.format(raw_df_filepath))
+    if if_write:
+        df.to_csv(raw_df_filepath+'.normalized.csv.gzip', index=False, header=True)
+        logging.info('successfully normalized file {}...'.format(raw_df_filepath))
     return df
 
 
@@ -54,12 +53,6 @@ def adding_pct_change(df_filepath):
     '''
     add pct change to the dataframe.
     '''
-    def adding_pct_change_columns(original_df, interval_lists=[]):
-        original_df = original_df.sort_values(by='time', ascending=True)
-        for x in interval_lists:
-            original_df['{}_pct'.format(x)] = original_df['close'].pct_change(periods=int(x)) * 100
-        return original_df.drop('code', axis=1)
-
     df = pd.read_csv(df_filepath, header=0, low_memory=False)
     # print(df)
     interval_list = [int(i) for i in range(1, 10)]  # get change in one month
@@ -68,4 +61,9 @@ def adding_pct_change(df_filepath):
     return df
 
 
+def adding_pct_change_columns(original_df, interval_lists=[1]):
+    original_df = original_df.sort_values(by='time', ascending=True)
+    for x in interval_lists:
+        original_df['{}_pct'.format(x)] = original_df['close'].pct_change(periods=int(x)) * 100
+    return original_df.drop('code', axis=1)
 
